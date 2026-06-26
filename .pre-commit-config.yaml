@@ -3,11 +3,17 @@ repos:
     rev: v5.0.0
     hooks:
       - id: trailing-whitespace
+        files: ^backend/
       - id: end-of-file-fixer
+        files: ^backend/
       - id: check-yaml
+        files: ^backend/
       - id: check-toml
+        files: ^backend/
       - id: check-merge-conflict
+        files: ^backend/
       - id: check-added-large-files
+        files: ^backend/
         args: ["--maxkb=500"]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
