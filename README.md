@@ -9,7 +9,7 @@
 
 - Python 3.11+
 - Node 18+
-- Une clé API OpenAI
+- Une clé API OpenAI *(optionnelle — sans elle, l'app démarre en mode dégradé : navigation et filtres disponibles, mais recommandations et carte des embeddings désactivées)*
 
 ## Démarrage
 

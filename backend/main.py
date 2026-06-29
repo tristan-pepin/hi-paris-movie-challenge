@@ -1,4 +1,5 @@
 import logging
+import os
 from contextlib import asynccontextmanager
 
 import pandas as pd
@@ -61,16 +62,23 @@ async def lifespan(app: FastAPI):
 
     df.drop(columns=["_vote"], inplace=True)
 
-    df = app.state.df
-    embed_df = df[df["Overview"].notna() & (df["Overview"].str.strip() != "")]
-    logger.info("%d films avec synopsis (embeddings)", len(embed_df))
-
-    vectors = load_embeddings(embed_df["Overview"].tolist())
-    app.state.embeddings = {
-        int(movie_id): vector for movie_id, vector in zip(embed_df.index, vectors)
-    }
-    app.state.chroma_collection = setup_chroma(embed_df, vectors)
-    app.state.projection = load_projection(app.state.df, app.state.embeddings)
+    if os.getenv("OPENAI_API_KEY"):
+        df = app.state.df
+        embed_df = df[df["Overview"].notna() & (df["Overview"].str.strip() != "")]
+        logger.info("%d films avec synopsis (embeddings)", len(embed_df))
+        vectors = load_embeddings(embed_df["Overview"].tolist())
+        app.state.embeddings = {
+            int(movie_id): vector for movie_id, vector in zip(embed_df.index, vectors)
+        }
+        app.state.chroma_collection = setup_chroma(embed_df, vectors)
+        app.state.projection = load_projection(app.state.df, app.state.embeddings)
+        app.state.embeddings_ready = True
+    else:
+        logger.warning("OPENAI_API_KEY not set — embeddings, recommendations and map disabled.")
+        app.state.embeddings = {}
+        app.state.chroma_collection = None
+        app.state.projection = []
+        app.state.embeddings_ready = False
 
     yield
 

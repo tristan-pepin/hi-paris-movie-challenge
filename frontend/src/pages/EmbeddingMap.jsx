@@ -33,6 +33,7 @@ export default function EmbeddingMap() {
   const [tooltip, setTooltip] = useState(null)
   const [selectedId, setSelectedId] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [embeddingsReady, setEmbeddingsReady] = useState(true)
   const [search, setSearch] = useState('')
   const searchRef = useRef('')
   const scalesRef = useRef(null)
@@ -65,6 +66,11 @@ export default function EmbeddingMap() {
 
   useEffect(() => {
     api.get('/analytics/projection').then(({ data }) => {
+      if (data.length === 0) {
+        setEmbeddingsReady(false)
+        setLoading(false)
+        return
+      }
       pointsRef.current = data
       const canvas = canvasRef.current
       const width = canvas.clientWidth
@@ -138,6 +144,15 @@ export default function EmbeddingMap() {
 
   return (
     <div className="relative w-full h-[calc(100vh-57px)] bg-zinc-950 overflow-hidden">
+      {!embeddingsReady && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center px-6">
+          <p className="text-zinc-200 font-semibold text-lg">Embedding map unavailable</p>
+          <p className="text-zinc-400 text-sm max-w-sm">
+            Set <code className="text-amber-400">OPENAI_API_KEY</code> in <code className="text-amber-400">backend/.env</code> and restart the server to compute embeddings and enable this view.
+          </p>
+        </div>
+      )}
+
       {loading && (
         <div className="absolute inset-0 flex items-center justify-center text-zinc-400 text-sm">
           Computing projection…

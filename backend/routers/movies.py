@@ -56,7 +56,7 @@ def _serialize_movie(movie_id: int, row: pd.Series, genre_avg_map: dict = {}) ->
 @router.get("/meta")
 def get_filter_options(request: Request):
     """Return genres, languages, genre stats, language counts and year range for filters."""
-    return request.app.state.meta_cache
+    return {**request.app.state.meta_cache, "embeddings_ready": request.app.state.embeddings_ready}
 
 
 @router.get("")
