@@ -15,12 +15,21 @@ function FilterSelect({ value, onChange, children }) {
   )
 }
 
+function yearOptions(yearRange) {
+  if (!yearRange) return []
+  const decades = []
+  const start = Math.floor(yearRange.min / 10) * 10
+  for (let y = start; y <= yearRange.max; y += 10) decades.push(y)
+  return decades
+}
+
 export default function MovieList() {
   const [movies, setMovies] = useState([])
   const [total, setTotal] = useState(0)
-  const [meta, setMeta] = useState({ genres: [], languages: [] })
+  const [avgRating, setAvgRating] = useState(null)
+  const [meta, setMeta] = useState({ genres: [], languages: [], genre_stats: {}, language_counts: {}, year_range: null })
   const [selectedId, setSelectedId] = useState(null)
-  const [filters, setFilters] = useState({ search: '', genre: '', lang: '', page: 1 })
+  const [filters, setFilters] = useState({ search: '', genre: '', lang: '', year_min: '', rating_min: '', page: 1 })
 
   const totalPages = Math.max(1, Math.ceil(total / LIMIT))
 
@@ -33,15 +42,20 @@ export default function MovieList() {
     if (filters.search) params.search = filters.search
     if (filters.genre) params.genre = filters.genre
     if (filters.lang) params.lang = filters.lang
+    if (filters.year_min) params.year_min = filters.year_min
+    if (filters.rating_min) params.rating_min = filters.rating_min
     api.get('/movies', { params }).then((res) => {
       setMovies(res.data.results)
       setTotal(res.data.total)
+      setAvgRating(res.data.avg_rating)
     })
   }, [filters])
 
   function setFilter(key, val) {
     setFilters((f) => ({ ...f, [key]: val, page: 1 }))
   }
+
+  const selectedGenreStat = filters.genre ? meta.genre_stats?.[filters.genre] : null
 
   return (
     <div className="p-4 space-y-4">
@@ -55,13 +69,43 @@ export default function MovieList() {
         />
         <FilterSelect value={filters.genre} onChange={(v) => setFilter('genre', v)}>
           <option value="">Tous les genres</option>
-          {meta.genres.map((g) => <option key={g} value={g}>{g}</option>)}
+          {meta.genres.map((g) => (
+            <option key={g} value={g}>
+              {g}{meta.genre_stats?.[g] ? ` (${meta.genre_stats[g].count})` : ''}
+            </option>
+          ))}
         </FilterSelect>
         <FilterSelect value={filters.lang} onChange={(v) => setFilter('lang', v)}>
           <option value="">Toutes les langues</option>
-          {meta.languages.map((l) => <option key={l} value={l}>{l}</option>)}
+          {meta.languages.map((l) => (
+            <option key={l} value={l}>
+              {l.toUpperCase()}{meta.language_counts?.[l] ? ` (${meta.language_counts[l]})` : ''}
+            </option>
+          ))}
         </FilterSelect>
-        <span className="self-center text-xs text-zinc-400">{total} films</span>
+        <FilterSelect value={filters.year_min} onChange={(v) => setFilter('year_min', v)}>
+          <option value="">Toutes les années</option>
+          {yearOptions(meta.year_range).map((y) => (
+            <option key={y} value={y}>Depuis {y}</option>
+          ))}
+        </FilterSelect>
+        <FilterSelect value={filters.rating_min} onChange={(v) => setFilter('rating_min', v)}>
+          <option value="">Toutes les notes</option>
+          {[5, 6, 7, 8, 9].map((n) => (
+            <option key={n} value={n}>{n}+ / 10</option>
+          ))}
+        </FilterSelect>
+      </div>
+
+      {/* Barre de stats contextuelle */}
+      <div className="flex items-center gap-3 text-xs text-zinc-400 -mt-1">
+        <span>{total.toLocaleString('fr-FR')} films</span>
+        {avgRating != null && (
+          <span>· note moyenne <span className="text-zinc-300 font-medium">{avgRating.toFixed(1)}</span></span>
+        )}
+        {selectedGenreStat && (
+          <span>· moy. {filters.genre} <span className="text-zinc-300 font-medium">{selectedGenreStat.avg_rating?.toFixed(1)}</span></span>
+        )}
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -95,6 +139,7 @@ export default function MovieList() {
           movieId={selectedId}
           onSelect={setSelectedId}
           onClose={() => setSelectedId(null)}
+          selectionAvg={avgRating}
         />
       )}
     </div>

@@ -36,7 +36,7 @@ def recommend(body: RecommendationRequest, request: Request):
         n_results=body.k + 1,
     )
     return [
-        _to_recommendation(int(mid), df.loc[int(mid)], dist)
-        for mid, dist in zip(results["ids"][0], results["distances"][0])
-        if int(mid) != body.movie_id and int(mid) in df.index
+        _to_recommendation(int(movie_id), df.loc[int(movie_id)], distance)
+        for movie_id, distance in zip(results["ids"][0], results["distances"][0])
+        if int(movie_id) != body.movie_id and int(movie_id) in df.index
     ][: body.k]

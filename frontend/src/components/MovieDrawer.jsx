@@ -4,15 +4,17 @@ import { api } from '../api/client'
 const scoreColor = (avg) =>
   avg >= 7 ? 'bg-green-500' : avg >= 5 ? 'bg-amber-500' : 'bg-red-500'
 
-export default function MovieDrawer({ movieId, onSelect, onClose }) {
+export default function MovieDrawer({ movieId, onSelect, onClose, selectionAvg }) {
   const [movie, setMovie] = useState(null)
   const [similar, setSimilar] = useState([])
+  const [statsOpen, setStatsOpen] = useState(false)
   const onCloseRef = useRef(onClose)
   useEffect(() => { onCloseRef.current = onClose })
 
   useEffect(() => {
     setMovie(null)
     setSimilar([])
+    setStatsOpen(false)
     Promise.all([
       api.get(`/movies/${movieId}`),
       api.post('/recommendations', { movie_id: movieId }),
@@ -71,15 +73,57 @@ export default function MovieDrawer({ movieId, onSelect, onClose }) {
                 ))}
               </div>
 
-              <div className="flex items-center gap-3">
-                {movie.vote_average != null && (
-                  <span className={`text-sm font-bold text-white rounded px-2 py-0.5 ${scoreColor(movie.vote_average)}`}>
-                    {movie.vote_average.toFixed(1)}
-                  </span>
-                )}
-                {movie.vote_count != null && (
-                  <span className="text-sm text-zinc-400">{movie.vote_count.toLocaleString()} votes</span>
-                )}
+              <div className="space-y-1">
+                <div className="flex items-center gap-3">
+                  {movie.vote_average != null && (
+                    <span className={`text-sm font-bold text-white rounded px-2 py-0.5 ${scoreColor(movie.vote_average)}`}>
+                      {movie.vote_average.toFixed(1)}
+                    </span>
+                  )}
+                  {movie.vote_count != null && (
+                    <span className="text-sm text-zinc-400">{movie.vote_count.toLocaleString()} votes</span>
+                  )}
+                  <button
+                    onClick={() => setStatsOpen((o) => !o)}
+                    className="text-xs text-zinc-500 hover:text-zinc-300 ml-auto"
+                  >
+                    {statsOpen ? 'masquer' : 'stats ▾'}
+                  </button>
+                </div>
+
+                {statsOpen && (() => {
+                  const similarRatings = similar.map((m) => m.vote_average).filter((v) => v != null)
+                  const similarAvg = similarRatings.length
+                    ? (similarRatings.reduce((a, b) => a + b, 0) / similarRatings.length).toFixed(1)
+                    : null
+                  return (
+                    <div className="text-xs text-zinc-400 space-y-1 pl-2 border-l border-zinc-700 ml-1">
+                      <div className="flex justify-between gap-4 text-zinc-600 italic pb-0.5">
+                        <span></span><span>note moy.</span>
+                      </div>
+                      {movie.genres?.map((genre) => (
+                        <div key={genre} className="flex justify-between gap-4">
+                          <span>{genre}</span>
+                          <span className="text-zinc-300">
+                            {movie.genre_avgs?.[genre] != null ? movie.genre_avgs[genre].toFixed(1) : '—'}
+                          </span>
+                        </div>
+                      ))}
+                      {similarAvg && (
+                        <div className="flex justify-between gap-4 pt-1 border-t border-zinc-800">
+                          <span>films similaires</span>
+                          <span className="text-zinc-300">{similarAvg}</span>
+                        </div>
+                      )}
+                      {selectionAvg != null && (
+                        <div className="flex justify-between gap-4 pt-1 border-t border-zinc-800">
+                          <span>sélection en cours</span>
+                          <span className="text-zinc-300">{selectionAvg.toFixed(1)}</span>
+                        </div>
+                      )}
+                    </div>
+                  )
+                })()}
               </div>
 
               {movie.overview && (

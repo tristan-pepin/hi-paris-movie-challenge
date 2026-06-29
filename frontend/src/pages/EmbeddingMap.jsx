@@ -33,6 +33,8 @@ export default function EmbeddingMap() {
   const [tooltip, setTooltip] = useState(null)
   const [selectedId, setSelectedId] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [search, setSearch] = useState('')
+  const searchRef = useRef('')
   const scalesRef = useRef(null)
 
   const draw = useCallback(() => {
@@ -48,11 +50,13 @@ export default function EmbeddingMap() {
     ctx.translate(t.x, t.y)
     ctx.scale(t.k, t.k)
 
+    const query = searchRef.current.toLowerCase()
     for (const p of pointsRef.current) {
+      const matches = !query || p.title.toLowerCase().includes(query)
       ctx.beginPath()
       ctx.arc(xScale(p.x), yScale(p.y), POINT_R / t.k, 0, Math.PI * 2)
-      ctx.fillStyle = genreColor(p.genre)
-      ctx.globalAlpha = 0.75
+      ctx.fillStyle = matches ? genreColor(p.genre) : '#3f3f46'
+      ctx.globalAlpha = matches ? 0.85 : 0.3
       ctx.fill()
     }
 
@@ -103,9 +107,11 @@ export default function EmbeddingMap() {
     const mx = (e.clientX - rect.left - t.x) / t.k
     const my = (e.clientY - rect.top - t.y) / t.k
 
+    const query = searchRef.current.toLowerCase()
     let best = null
     let bestDist = Infinity
     for (const p of pointsRef.current) {
+      if (query && !p.title.toLowerCase().includes(query)) continue
       const dx = xScale(p.x) - mx
       const dy = yScale(p.y) - my
       const d = dx * dx + dy * dy
@@ -124,6 +130,12 @@ export default function EmbeddingMap() {
     if (tooltip) setSelectedId(tooltip.point.movie_id)
   }, [tooltip])
 
+  function handleSearch(value) {
+    searchRef.current = value
+    setSearch(value)
+    draw()
+  }
+
   return (
     <div className="relative w-full h-[calc(100vh-57px)] bg-zinc-950 overflow-hidden">
       {loading && (
@@ -140,6 +152,19 @@ export default function EmbeddingMap() {
         onClick={handleClick}
         style={{ cursor: tooltip ? 'pointer' : 'grab' }}
       />
+
+      {/* Recherche */}
+      {!loading && (
+        <div className="absolute top-3 right-3">
+          <input
+            type="search"
+            placeholder="Rechercher un titre…"
+            value={search}
+            onChange={(e) => handleSearch(e.target.value)}
+            className="w-52 border border-zinc-600 rounded px-3 py-1.5 text-sm bg-zinc-900/80 backdrop-blur text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-zinc-400"
+          />
+        </div>
+      )}
 
       {/* Légende */}
       {!loading && (

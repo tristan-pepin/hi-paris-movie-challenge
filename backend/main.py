@@ -27,19 +27,48 @@ async def lifespan(app: FastAPI):
     app.state.df = DataFilter().apply(raw_df)
     logger.info("%d films après filtrage", len(app.state.df))
 
-    app.state.meta_cache = {
-        "genres": sorted(
-            {g.strip() for raw in app.state.df["Genre"].dropna() for g in raw.split(",")}
-        ),
-        "languages": sorted(app.state.df["Original_Language"].dropna().unique().tolist()),
+    df = app.state.df
+    df["_vote"] = pd.to_numeric(df["Vote_Average"], errors="coerce")
+
+    genre_df = (
+        df.assign(_genre=df["Genre"].str.split(",")).explode("_genre").dropna(subset=["_genre"])
+    )
+    genre_df = genre_df[genre_df["_genre"].str.strip() != ""]
+    genre_df["_genre"] = genre_df["_genre"].str.strip()
+
+    genre_stats = {
+        genre: {
+            "count": len(group),
+            "avg_rating": round(float(group["_vote"].mean()), 2)
+            if group["_vote"].notna().any()
+            else None,
+        }
+        for genre, group in genre_df.groupby("_genre")
     }
+
+    years = pd.to_datetime(df["Release_Date"], errors="coerce").dt.year.dropna()
+
+    app.state.meta_cache = {
+        "genres": sorted(genre_stats),
+        "languages": sorted(df["Original_Language"].dropna().unique().tolist()),
+        "genre_stats": genre_stats,
+        "language_counts": {
+            lang: int(count) for lang, count in df["Original_Language"].value_counts().items()
+        },
+        "year_range": {"min": int(years.min()), "max": int(years.max())},
+        "genre_avg_map": {genre: stats["avg_rating"] for genre, stats in genre_stats.items()},
+    }
+
+    df.drop(columns=["_vote"], inplace=True)
 
     df = app.state.df
     embed_df = df[df["Overview"].notna() & (df["Overview"].str.strip() != "")]
     logger.info("%d films avec synopsis (embeddings)", len(embed_df))
 
     vectors = load_embeddings(embed_df["Overview"].tolist())
-    app.state.embeddings = {int(mid): vec for mid, vec in zip(embed_df.index, vectors)}
+    app.state.embeddings = {
+        int(movie_id): vector for movie_id, vector in zip(embed_df.index, vectors)
+    }
     app.state.chroma_collection = setup_chroma(embed_df, vectors)
     app.state.projection = load_projection(app.state.df, app.state.embeddings)
 
