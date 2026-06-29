@@ -1,19 +1,10 @@
 import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom'
 import MovieList from './pages/MovieList'
+import EmbeddingMap from './pages/EmbeddingMap'
 
-function WIP({ label }) {
-  return (
-    <div className="flex flex-col items-center justify-center gap-3 py-24 text-zinc-400">
-      <span className="text-4xl">🚧</span>
-      <p className="font-medium text-zinc-600 dark:text-zinc-300">{label}</p>
-      <p className="text-sm">Développement en cours</p>
-    </div>
-  )
-}
 
 const navLinks = [
   { to: '/', label: 'Films' },
-  { to: '/analytics', label: 'Analytics' },
   { to: '/map', label: 'Carte' },
 ]
 
@@ -40,8 +31,7 @@ export default function App() {
       <main>
         <Routes>
           <Route path="/" element={<MovieList />} />
-          <Route path="/analytics" element={<WIP label="Analytics" />} />
-          <Route path="/map" element={<WIP label="Carte des embeddings" />} />
+          <Route path="/map" element={<EmbeddingMap />} />
         </Routes>
       </main>
     </BrowserRouter>

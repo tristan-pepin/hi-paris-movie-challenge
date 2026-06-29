@@ -6,10 +6,12 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from routers.analytics import router as analytics_router
 from routers.movies import router as movies_router
 from routers.recommendations import router as recommendations_router
 from services.embeddings import load_embeddings, setup_chroma
 from services.preprocessing import DataFilter
+from services.projection import load_projection
 
 load_dotenv()
 
@@ -39,6 +41,7 @@ async def lifespan(app: FastAPI):
     vectors = load_embeddings(embed_df["Overview"].tolist())
     app.state.embeddings = {int(mid): vec for mid, vec in zip(embed_df.index, vectors)}
     app.state.chroma_collection = setup_chroma(embed_df, vectors)
+    app.state.projection = load_projection(app.state.df, app.state.embeddings)
 
     yield
 
@@ -55,6 +58,7 @@ app.add_middleware(
 
 app.include_router(movies_router)
 app.include_router(recommendations_router)
+app.include_router(analytics_router)
 
 
 @app.get("/api/health")
