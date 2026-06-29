@@ -52,6 +52,8 @@ Au clic, un panneau latéral (drawer) affiche le détail complet : synopsis, vot
 
 **Figure 1 — Vue liste avec filtres et drawer ouvert**
 
+![Vue liste](../assets/application.png)
+
 ### 2. Carte sémantique des embeddings
 
 La page `/map` affiche les ~9 700 films comme un nuage de points sur canvas D3 (SVG trop lent à cette échelle). Chaque point est coloré par genre principal. Zoom et pan natifs via `d3-zoom`. Au survol, un tooltip affiche le poster miniature, le titre, l'année et la note. Au clic, le même drawer s'ouvre.
@@ -59,6 +61,8 @@ La page `/map` affiche les ~9 700 films comme un nuage de points sur canvas D3 (
 Une barre de recherche filtre les points par titre en temps réel : les films correspondants restent colorés, les autres s'estompent en gris.
 
 **Figure 2 — Carte sémantique avec clusters thématiques**
+
+![Carte sémantique](../assets/embedding_space.png)
 
 Les clusters ne suivent pas strictement les genres TMDB — c'est un résultat intentionnellement intéressant : les embeddings de synopsis capturent des similarités thématiques plus fines que les catégories prédéfinies. Un film d'action spatial se retrouve plus près de la SF que des autres films d'action.
 
