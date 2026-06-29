@@ -10,10 +10,14 @@ dependencies = [
     "openai>=1.0",
     "chromadb>=0.5",
     "numpy>=1.26",
+    "evoc>=0.3.1",
 ]
 
 [tool.uv]
 package = false
+
+[tool.uv.sources]
+evoc = { git = "https://github.com/TutteInstitute/evoc" }
 
 [dependency-groups]
 dev = [
