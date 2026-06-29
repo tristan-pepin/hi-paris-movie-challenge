@@ -78,6 +78,8 @@ L'analyse exploratoire (`backend/notebooks/eda.ipynb`) a révélé plusieurs ano
 
 **Total filtré : ~123 films sur 9 837 (~1,25 %). Le dataset final compte ~9 714 films.**
 
+Les films à contenu adulte (détectés par mots-clés dans le titre/synopsis) restent dans le dataset mais sont affichés avec le poster flouté et une confirmation requise au clic (`adult: bool` retourné par l'API, géré côté frontend dans `MovieCard`).
+
 ## Choix techniques
 
 - **`text-embedding-3-small`** — bon compromis coût/qualité pour des synopsis courts
