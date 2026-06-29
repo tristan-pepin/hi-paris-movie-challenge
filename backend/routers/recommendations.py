@@ -27,6 +27,8 @@ def _to_recommendation(movie_id: int, row: pd.Series, distance: float) -> dict:
 @router.post("/recommendations")
 def recommend(body: RecommendationRequest, request: Request):
     """Return k movies most similar to the given movie_id."""
+    if not request.app.state.embeddings_ready:
+        return []
     embeddings = request.app.state.embeddings
     if body.movie_id not in embeddings:
         return []

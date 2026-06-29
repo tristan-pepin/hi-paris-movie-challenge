@@ -27,7 +27,7 @@ export default function MovieList() {
   const [movies, setMovies] = useState([])
   const [total, setTotal] = useState(0)
   const [avgRating, setAvgRating] = useState(null)
-  const [meta, setMeta] = useState({ genres: [], languages: [], genre_stats: {}, language_counts: {}, year_range: null })
+  const [meta, setMeta] = useState({ genres: [], languages: [], genre_stats: {}, language_counts: {}, year_range: null, embeddings_ready: true })
   const [selectedId, setSelectedId] = useState(null)
   const [filters, setFilters] = useState({ search: '', genre: '', lang: '', year_min: '', rating_min: '', page: 1 })
 
@@ -107,6 +107,12 @@ export default function MovieList() {
           <span>· avg {filters.genre} <span className="text-zinc-300 font-medium">{selectedGenreStat.avg_rating?.toFixed(1)}</span></span>
         )}
       </div>
+
+      {!meta.embeddings_ready && (
+        <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-400">
+          <strong>Recommendations and map disabled.</strong> Set <code className="text-amber-300">OPENAI_API_KEY</code> in <code className="text-amber-300">backend/.env</code> and restart the server to enable semantic search and the embedding map.
+        </div>
+      )}
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {movies.map((movie) => (
