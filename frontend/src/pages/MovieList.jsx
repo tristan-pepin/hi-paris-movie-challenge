@@ -91,7 +91,11 @@ export default function MovieList() {
       </div>
 
       {selectedId != null && (
-        <MovieDrawer onClose={() => setSelectedId(null)} />
+        <MovieDrawer
+          movieId={selectedId}
+          onSelect={setSelectedId}
+          onClose={() => setSelectedId(null)}
+        />
       )}
     </div>
   )

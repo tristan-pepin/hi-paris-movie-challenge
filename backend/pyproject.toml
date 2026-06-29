@@ -7,6 +7,9 @@ dependencies = [
     "uvicorn[standard]>=0.32",
     "python-dotenv>=1.0",
     "pandas>=2.2",
+    "openai>=1.0",
+    "chromadb>=0.5",
+    "numpy>=1.26",
 ]
 
 [tool.uv]
@@ -16,6 +19,9 @@ package = false
 dev = [
     "ruff>=0.8",
     "pre-commit>=4.0",
+    "jupyter>=1.1",
+    "matplotlib>=3.9",
+    "seaborn>=0.13",
 ]
 
 [tool.ruff]
