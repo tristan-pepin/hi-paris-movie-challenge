@@ -4,15 +4,15 @@ import EmbeddingMap from './pages/EmbeddingMap'
 
 
 const navLinks = [
-  { to: '/', label: 'Films' },
-  { to: '/map', label: 'Carte' },
+  { to: '/', label: 'Movies' },
+  { to: '/map', label: 'Map' },
 ]
 
 export default function App() {
   return (
     <BrowserRouter>
       <header className="border-b border-zinc-200 dark:border-zinc-800 px-4 py-3 flex items-center gap-6">
-        <span className="font-semibold text-zinc-900 dark:text-zinc-100">Movie Explorer</span>
+        <span className="font-semibold text-zinc-900 dark:text-zinc-100">Movie explorer</span>
         <nav className="flex gap-4">
           {navLinks.map(({ to, label }) => (
             <NavLink

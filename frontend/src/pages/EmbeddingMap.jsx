@@ -140,7 +140,7 @@ export default function EmbeddingMap() {
     <div className="relative w-full h-[calc(100vh-57px)] bg-zinc-950 overflow-hidden">
       {loading && (
         <div className="absolute inset-0 flex items-center justify-center text-zinc-400 text-sm">
-          Calcul de la projection…
+          Computing projection…
         </div>
       )}
 
@@ -158,7 +158,7 @@ export default function EmbeddingMap() {
         <div className="absolute top-3 right-3">
           <input
             type="search"
-            placeholder="Rechercher un titre…"
+            placeholder="Search a title…"
             value={search}
             onChange={(e) => handleSearch(e.target.value)}
             className="w-52 border border-zinc-600 rounded px-3 py-1.5 text-sm bg-zinc-900/80 backdrop-blur text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-zinc-400"
@@ -177,7 +177,7 @@ export default function EmbeddingMap() {
           ))}
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: DEFAULT_COLOR }} />
-            <span className="text-xs text-zinc-400">Autre</span>
+            <span className="text-xs text-zinc-400">Other</span>
           </div>
         </div>
       )}

@@ -5,17 +5,17 @@ import pandas as pd
 logger = logging.getLogger(__name__)
 
 _RULES: list[tuple[str, callable]] = [
-    ("Titre manquant", lambda df: df["Title"].notna()),
-    ("Poster_Url manquante", lambda df: df["Poster_Url"].notna()),
+    ("Missing title", lambda df: df["Title"].notna()),
+    ("Missing poster URL", lambda df: df["Poster_Url"].notna()),
     (
-        "URL dans Original_Language",
+        "URL in Original_Language",
         lambda df: ~df["Original_Language"].str.startswith("http", na=False),
     ),
     (
-        "Code langue > 3 chars",
+        "Language code > 3 chars",
         lambda df: df["Original_Language"].str.len().le(3) | df["Original_Language"].isna(),
     ),
-    ("Overview purement numérique", lambda df: ~df["Overview"].str.match(r"^\d+\.?\d*$", na=False)),
+    ("Purely numeric overview", lambda df: ~df["Overview"].str.match(r"^\d+\.?\d*$", na=False)),
     ("Vote_Count = 0", lambda df: pd.to_numeric(df["Vote_Count"], errors="coerce").ne(0)),
 ]
 
@@ -30,7 +30,7 @@ class DataFilter:
             mask = rule(df)
             dropped = (~mask).sum()
             if dropped:
-                logger.info("  %-35s → %d lignes supprimées", label, dropped)
+                logger.info("  %-35s → %d rows dropped", label, dropped)
             df = df[mask]
-        logger.info("Filtrage terminé : %d → %d films (-%d)", initial, len(df), initial - len(df))
+        logger.info("Filtering done: %d → %d movies (-%d)", initial, len(df), initial - len(df))
         return df

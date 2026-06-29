@@ -39,7 +39,7 @@ export default function MovieDrawer({ movieId, onSelect, onClose, selectionAvg }
             onClick={onClose}
             className="text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100"
           >
-            ✕ Fermer
+            ✕ Close
           </button>
         </div>
 
@@ -87,7 +87,7 @@ export default function MovieDrawer({ movieId, onSelect, onClose, selectionAvg }
                     onClick={() => setStatsOpen((o) => !o)}
                     className="text-xs text-zinc-500 hover:text-zinc-300 ml-auto"
                   >
-                    {statsOpen ? 'masquer' : 'stats ▾'}
+                    {statsOpen ? 'hide' : 'stats ▾'}
                   </button>
                 </div>
 
@@ -99,7 +99,7 @@ export default function MovieDrawer({ movieId, onSelect, onClose, selectionAvg }
                   return (
                     <div className="text-xs text-zinc-400 space-y-1 pl-2 border-l border-zinc-700 ml-1">
                       <div className="flex justify-between gap-4 text-zinc-600 italic pb-0.5">
-                        <span></span><span>note moy.</span>
+                        <span></span><span>avg rating</span>
                       </div>
                       {movie.genres?.map((genre) => (
                         <div key={genre} className="flex justify-between gap-4">
@@ -111,13 +111,13 @@ export default function MovieDrawer({ movieId, onSelect, onClose, selectionAvg }
                       ))}
                       {similarAvg && (
                         <div className="flex justify-between gap-4 pt-1 border-t border-zinc-800">
-                          <span>films similaires</span>
+                          <span>similar movies</span>
                           <span className="text-zinc-300">{similarAvg}</span>
                         </div>
                       )}
                       {selectionAvg != null && (
                         <div className="flex justify-between gap-4 pt-1 border-t border-zinc-800">
-                          <span>sélection en cours</span>
+                          <span>current selection</span>
                           <span className="text-zinc-300">{selectionAvg.toFixed(1)}</span>
                         </div>
                       )}
@@ -135,7 +135,7 @@ export default function MovieDrawer({ movieId, onSelect, onClose, selectionAvg }
               {similar.length > 0 && (
                 <div className="pt-2 space-y-2">
                   <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-                    Films similaires
+                    Similar movies
                   </h3>
                   <div className="grid grid-cols-3 gap-2">
                     {similar.map((m) => (

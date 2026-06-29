@@ -39,7 +39,7 @@ export default function MovieCard({ movie, onClick }) {
             loading="lazy"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-zinc-400 text-sm">Aucune image</div>
+          <div className="w-full h-full flex items-center justify-center text-zinc-400 text-sm">No image</div>
         )}
 
         {adult && !confirmed && !showWarning && (
@@ -53,15 +53,15 @@ export default function MovieCard({ movie, onClick }) {
             className="absolute inset-0 bg-zinc-900/90 flex flex-col items-center justify-center gap-3 p-3 text-center"
             onClick={(e) => e.stopPropagation()}
           >
-            <p className="text-xs text-white font-semibold leading-snug">Contenu adulte</p>
+            <p className="text-xs text-white font-semibold leading-snug">Adult content</p>
             <button
               onClick={confirm}
               className="text-xs bg-white text-zinc-900 font-medium rounded px-3 py-1 hover:bg-zinc-200"
             >
-              Voir quand même
+              View anyway
             </button>
             <button onClick={dismiss} className="text-xs text-zinc-400 hover:text-zinc-200">
-              Annuler
+              Cancel
             </button>
           </div>
         )}
