@@ -62,13 +62,13 @@ export default function MovieList() {
       <div className="flex flex-wrap gap-2">
         <input
           type="search"
-          placeholder="Rechercher un titre…"
+          placeholder="Search a title…"
           value={filters.search}
           onChange={(e) => setFilter('search', e.target.value)}
           className={`${SELECT_CLS} flex-1 min-w-40`}
         />
         <FilterSelect value={filters.genre} onChange={(v) => setFilter('genre', v)}>
-          <option value="">Tous les genres</option>
+          <option value="">All genres</option>
           {meta.genres.map((g) => (
             <option key={g} value={g}>
               {g}{meta.genre_stats?.[g] ? ` (${meta.genre_stats[g].count})` : ''}
@@ -76,7 +76,7 @@ export default function MovieList() {
           ))}
         </FilterSelect>
         <FilterSelect value={filters.lang} onChange={(v) => setFilter('lang', v)}>
-          <option value="">Toutes les langues</option>
+          <option value="">All languages</option>
           {meta.languages.map((l) => (
             <option key={l} value={l}>
               {l.toUpperCase()}{meta.language_counts?.[l] ? ` (${meta.language_counts[l]})` : ''}
@@ -84,13 +84,13 @@ export default function MovieList() {
           ))}
         </FilterSelect>
         <FilterSelect value={filters.year_min} onChange={(v) => setFilter('year_min', v)}>
-          <option value="">Toutes les années</option>
+          <option value="">All years</option>
           {yearOptions(meta.year_range).map((y) => (
-            <option key={y} value={y}>Depuis {y}</option>
+            <option key={y} value={y}>From {y}</option>
           ))}
         </FilterSelect>
         <FilterSelect value={filters.rating_min} onChange={(v) => setFilter('rating_min', v)}>
-          <option value="">Toutes les notes</option>
+          <option value="">All ratings</option>
           {[5, 6, 7, 8, 9].map((n) => (
             <option key={n} value={n}>{n}+ / 10</option>
           ))}
@@ -99,12 +99,12 @@ export default function MovieList() {
 
       {/* Barre de stats contextuelle */}
       <div className="flex items-center gap-3 text-xs text-zinc-400 -mt-1">
-        <span>{total.toLocaleString('fr-FR')} films</span>
+        <span>{total.toLocaleString('en-US')} movies</span>
         {avgRating != null && (
-          <span>· note moyenne <span className="text-zinc-300 font-medium">{avgRating.toFixed(1)}</span></span>
+          <span>· avg rating <span className="text-zinc-300 font-medium">{avgRating.toFixed(1)}</span></span>
         )}
         {selectedGenreStat && (
-          <span>· moy. {filters.genre} <span className="text-zinc-300 font-medium">{selectedGenreStat.avg_rating?.toFixed(1)}</span></span>
+          <span>· avg {filters.genre} <span className="text-zinc-300 font-medium">{selectedGenreStat.avg_rating?.toFixed(1)}</span></span>
         )}
       </div>
 
@@ -120,17 +120,17 @@ export default function MovieList() {
           onClick={() => setFilters((f) => ({ ...f, page: f.page - 1 }))}
           className="px-3 py-1 rounded border text-sm disabled:opacity-40 hover:bg-zinc-100 dark:hover:bg-zinc-800"
         >
-          ← Précédent
+          ← Previous
         </button>
         <span className="text-sm text-zinc-600 dark:text-zinc-400">
-          Page {filters.page} / {totalPages}
+          Page {filters.page} of {totalPages}
         </span>
         <button
           disabled={filters.page === totalPages}
           onClick={() => setFilters((f) => ({ ...f, page: f.page + 1 }))}
           className="px-3 py-1 rounded border text-sm disabled:opacity-40 hover:bg-zinc-100 dark:hover:bg-zinc-800"
         >
-          Suivant →
+          Next →
         </button>
       </div>
 

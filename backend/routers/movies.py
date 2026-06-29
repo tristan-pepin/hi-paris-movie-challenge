@@ -113,7 +113,7 @@ def get_movie(movie_id: int, request: Request):
     """Return full details for a single movie by its id."""
     df: pd.DataFrame = request.app.state.df
     if movie_id not in df.index:
-        raise HTTPException(status_code=404, detail="Film introuvable")
+        raise HTTPException(status_code=404, detail="Movie not found")
     row = df.loc[movie_id]
     genre_avg_map = request.app.state.meta_cache["genre_avg_map"]
     return {
