@@ -21,8 +21,8 @@ def _serialize_movie(movie_id: int, row: pd.Series) -> dict:
     """Serialize a DataFrame row into a movie card (summary fields)."""
     return {
         "movie_id": movie_id,
-        "title": row["Title"],
-        "poster_url": row["Poster_Url"],
+        "title": _coerce(row["Title"], str),
+        "poster_url": _coerce(row["Poster_Url"], str),
         "vote_average": _coerce(row["Vote_Average"], float),
         "genres": _split_genres(row["Genre"]),
         "release_year": str(row["Release_Date"])[:4] if pd.notna(row["Release_Date"]) else None,
@@ -80,6 +80,6 @@ def get_movie(movie_id: int, request: Request):
         "overview": row["Overview"],
         "vote_count": _coerce(row["Vote_Count"], int),
         "popularity": _coerce(row["Popularity"], float),
-        "original_language": row["Original_Language"],
-        "release_date": row["Release_Date"],
+        "original_language": _coerce(row["Original_Language"], str),
+        "release_date": _coerce(row["Release_Date"], str),
     }
