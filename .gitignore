@@ -4,6 +4,7 @@ backend/cache/
 !backend/cache/.gitkeep
 frontend/node_modules/
 frontend/dist/
+backend/data/
 
 .claude/
 .agents/
