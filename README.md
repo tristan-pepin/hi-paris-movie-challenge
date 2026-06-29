@@ -1,4 +1,6 @@
-# Movie Explorer
+# Movie explorer
+
+> **[📄 Lire le rapport de synthèse](report/rapport.md)**
 
 > Challenge Hi-Paris — visualisation d'une base de 9 837 films (TMDB).
 > Stack : React + Vite · FastAPI · ChromaDB · OpenAI embeddings · EVoC
