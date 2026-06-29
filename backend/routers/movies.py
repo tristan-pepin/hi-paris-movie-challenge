@@ -12,9 +12,30 @@ def _coerce(value, target_type):
         return None
 
 
+_ADULT_KEYWORDS = frozenset(
+    [
+        "pornographic",
+        "erotic film",
+        "erotic movie",
+        "adult film",
+        "adult movie",
+        "sexually explicit",
+        "sex film",
+        "hardcore",
+        "softcore",
+    ]
+)
+
+
 def _split_genres(raw_genre: str) -> list[str]:
     """Split a comma-separated genre string into a cleaned list."""
     return [] if pd.isna(raw_genre) else [g.strip() for g in str(raw_genre).split(",")]
+
+
+def _is_adult(row: pd.Series) -> bool:
+    """Return True if the film's overview or title contains explicit adult keywords."""
+    text = " ".join([str(row.get("Overview") or ""), str(row.get("Title") or "")]).lower()
+    return any(kw in text for kw in _ADULT_KEYWORDS)
 
 
 def _serialize_movie(movie_id: int, row: pd.Series) -> dict:
@@ -26,6 +47,7 @@ def _serialize_movie(movie_id: int, row: pd.Series) -> dict:
         "vote_average": _coerce(row["Vote_Average"], float),
         "genres": _split_genres(row["Genre"]),
         "release_year": str(row["Release_Date"])[:4] if pd.notna(row["Release_Date"]) else None,
+        "adult": _is_adult(row),
     }
 
 
