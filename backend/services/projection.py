@@ -35,7 +35,7 @@ def load_projection(df: pd.DataFrame, embeddings: dict[int, np.ndarray]) -> list
             return cached
 
     movie_ids = list(embeddings.keys())
-    matrix = np.stack([embeddings[mid] for mid in movie_ids])
+    matrix = np.stack([embeddings[movie_id] for movie_id in movie_ids])
     coords = _compute_projection(matrix)
 
     def _primary_genre(row: pd.Series) -> str:
@@ -46,11 +46,11 @@ def load_projection(df: pd.DataFrame, embeddings: dict[int, np.ndarray]) -> list
         return parts[0].strip() if parts else "Autre"
 
     points = []
-    for mid, (x, y) in zip(movie_ids, coords):
-        row = df.loc[mid]
+    for movie_id, (x, y) in zip(movie_ids, coords):
+        row = df.loc[movie_id]
         points.append(
             {
-                "movie_id": mid,
+                "movie_id": movie_id,
                 "title": str(row["Title"]),
                 "x": round(float(x), 4),
                 "y": round(float(y), 4),
